@@ -1,0 +1,223 @@
+{
+  "features": [
+    {
+      "name": "Device Cleaning X1",
+      "type": "button",
+      "cmd": "rm -rf /sdcard/Android/data/*/cache/*"
+    },
+    {
+      "name": "Device Cleaning X2",
+      "type": "button",
+      "cmd": "rm -rf /sdcard/Android/data/*/cache/* && rm -rf /data/data/*/cache/*"
+    },
+    {
+      "name": "Fast Touch X1",
+      "type": "button",
+      "cmd": "settings put system touch_response_time 100"
+    },
+    {
+      "name": "Fast Touch X2",
+      "type": "button",
+      "cmd": "settings put system touch_response_time 80"
+    },
+    {
+      "name": "Fast Touch X3",
+      "type": "button",
+      "cmd": "settings put system touch_response_time 60"
+    },
+    {
+      "name": "Fast Touch X4",
+      "type": "button",
+      "cmd": "settings put system touch_response_time 40"
+    },
+    {
+      "name": "Pointer Speed",
+      "type": "seekbar",
+      "cmd": "settings put system pointer_speed {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "RES X1",
+      "type": "button",
+      "cmd": "wm density 160"
+    },
+    {
+      "name": "RES X2",
+      "type": "button",
+      "cmd": "wm density 240"
+    },
+    {
+      "name": "RES X3",
+      "type": "button",
+      "cmd": "wm density 320"
+    },
+    {
+      "name": "RES OFF",
+      "type": "button",
+      "cmd": "wm density reset"
+    },
+    {
+      "name": "DPI X1",
+      "type": "button",
+      "cmd": "wm density 160"
+    },
+    {
+      "name": "DPI X2",
+      "type": "button",
+      "cmd": "wm density 240"
+    },
+    {
+      "name": "DPI X3",
+      "type": "button",
+      "cmd": "wm density 320"
+    },
+    {
+      "name": "DPI OFF",
+      "type": "button",
+      "cmd": "wm density reset"
+    },
+    {
+      "name": "Deep Clean",
+      "type": "switch",
+      "cmd_on": "rm -rf /sdcard/Android/data/*/cache/* && rm -rf /data/data/*/cache/*",
+      "cmd_off": "echo Clean cancelled"
+    },
+    {
+      "name": "Reduce Delay",
+      "type": "seekbar",
+      "cmd": "settings put system touch_response_time {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Network Reducer",
+      "type": "switch",
+      "cmd_on": "settings put global wifi_suspend_optimizations_enabled 0",
+      "cmd_off": "settings put global wifi_suspend_optimizations_enabled 1"
+    },
+    {
+      "name": "Boost Performance",
+      "type": "switch",
+      "cmd_on": "echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
+      "cmd_off": "echo powersave > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+    },
+    {
+      "name": "Do Not Disturb",
+      "type": "switch",
+      "cmd_on": "settings put global zen_mode 1",
+      "cmd_off": "settings put global zen_mode 0"
+    },
+    {
+      "name": "Network Stabilization",
+      "type": "switch",
+      "cmd_on": "settings put global wifi_suspend_optimizations_enabled 0",
+      "cmd_off": "settings put global wifi_suspend_optimizations_enabled 1"
+    },
+    {
+      "name": "Sensitivity Adjusted",
+      "type": "seekbar",
+      "cmd": "settings put system sensitivity {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "FPS 60",
+      "type": "button",
+      "cmd": "settings put system peak_refresh_rate 60.0"
+    },
+    {
+      "name": "FPS 90",
+      "type": "button",
+      "cmd": "settings put system peak_refresh_rate 90.0"
+    },
+    {
+      "name": "FPS 120",
+      "type": "button",
+      "cmd": "settings put system peak_refresh_rate 120.0"
+    },
+    {
+      "name": "Aim Trick",
+      "type": "switch",
+      "cmd_on": "settings put system aim_trick 1",
+      "cmd_off": "settings put system aim_trick 0"
+    },
+    {
+      "name": "ElixirSOC",
+      "type": "switch",
+      "cmd_on": "settings put global elixir_soc 1",
+      "cmd_off": "settings put global elixir_soc 0"
+    },
+    {
+      "name": "SurfaceFlinger TUNING",
+      "type": "switch",
+      "cmd_on": "settings put global surface_flinger_tuning 1",
+      "cmd_off": "settings put global surface_flinger_tuning 0"
+    },
+    {
+      "name": "Optimize Aiming",
+      "type": "switch",
+      "cmd_on": "settings put system optimize_aiming 1",
+      "cmd_off": "settings put system optimize_aiming 0"
+    },
+    {
+      "name": "Prime Sensitivity+",
+      "type": "seekbar",
+      "cmd": "settings put system prime_sensi {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Enhanced Aim Assist",
+      "type": "seekbar",
+      "cmd": "settings put system aim_assist {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Enhanced Aim Head",
+      "type": "seekbar",
+      "cmd": "settings put system aim_head {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Adjust DragShot Aim",
+      "type": "seekbar",
+      "cmd": "settings put system dragshot {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Settings Weapon",
+      "type": "seekbar",
+      "cmd": "settings put system weapon_config {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Adjust SmoothAim",
+      "type": "seekbar",
+      "cmd": "settings put system smooth_aim {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "name": "Adjust ShotAccuracy",
+      "type": "seekbar",
+      "cmd": "settings put system shot_accuracy {value}",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    }
+  ]
+}

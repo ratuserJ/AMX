@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <title>AVX Official</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: #0A0A0A; color: #fff; display: flex; justify-content: center; 
+            min-height: 100vh; overflow-x: hidden; overscroll-behavior: none; 
+        }
+
+        .app { 
+            width: 100%; max-width: 400px; 
+            background: #0A0A0A; 
+            min-height: 100vh; padding-bottom: 90px;
+            position: relative;
+        }
+
+        .header { 
+            padding: 16px 18px 12px; display: flex; align-items: center; gap: 12px; 
+            background: #121212; 
+            border-bottom: 2px solid #EA580C;
+            margin-bottom: 12px;
+        }
+        .logo { font-size: 28px; font-weight: 900; line-height: 1; color: #EA580C; letter-spacing: -1px; }
+        .info h2 { font-size: 7px; color: rgba(234,88,12,0.4); font-weight: 400; margin-bottom: 1px; text-transform: lowercase; }
+        .info h1 { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 1px; color: #EA580C; }
+        .info p { font-size: 6px; color: rgba(255,255,255,0.25); }
+
+        .divider { width: 85%; height: 1.5px; background: #EA580C; margin: 0 auto 12px auto; border-radius: 2px; opacity: 0.5; }
+        .content { padding: 0 14px; display: flex; flex-direction: column; gap: 6px; }
+
+        .card { 
+            background: #121212; 
+            border-left: 4px solid #EA580C;
+            border-radius: 4px; 
+            padding: 10px 13px; 
+            border: 1px solid rgba(234,88,12,0.1);
+            border-left-width: 4px;
+            margin-bottom: 2px;
+            width: 100%;
+        }
+
+        .f-title { font-size: 9px; font-weight: 600; color: #EA580C; margin-bottom: 2px; }
+        .f-desc { font-size: 6.5px; color: #887a6e; line-height: 1.3; margin-bottom: 5px; font-weight: 300; }
+
+        .slider-vertical-wrap { width: 100%; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; outline: none; }
+        input[type=range]::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: #2a1f1a; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 5px; border-radius: 2px; background: #EA580C; border: 1px solid #F97316; cursor: pointer; margin-top: -5px; }
+        .val { font-size: 8px; font-weight: 600; min-width: 25px; text-align: right; color: #EA580C; display: block; margin-top: 2px; }
+
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 5px; }
+        .grid:first-of-type { margin-top: 0; }
+        .btn { 
+            background: #121212; 
+            border: 1px solid #2a2a2a; 
+            color: #EA580C; 
+            font-size: 6.5px; 
+            padding: 5px 0; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            text-align: center; 
+            transition: all 0.15s;
+        }
+        .btn.active { 
+            background: #EA580C; 
+            color: #0A0A0A; 
+            border-color: #F97316; 
+            font-weight: 700; 
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; }
+        .clean-switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+        .clean-switch input { opacity: 0; width: 0; height: 0; }
+        .clean-sl { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2a1f1a; transition: all 0.2s ease; border-radius: 20px; border: 1px solid #3a2a1f; }
+        .clean-sl:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: #5a4a3a; transition: all 0.2s ease; border-radius: 50%; }
+        .clean-switch input:checked + .clean-sl { background-color: #7C2D12; border-color: #EA580C; }
+        .clean-switch input:checked + .clean-sl:before { transform: translateX(16px); background-color: #EA580C; }
+
+        .bottom-nav-left {
+            position: fixed; bottom: 18px; left: 18px; width: auto; height: 34px;
+            background: #121212; border-radius: 17px; display: flex; align-items: center;
+            padding: 0 10px 0 6px; border: 1px solid rgba(234,88,12,0.15); z-index: 100;
+        }
+        .btn-nav { display: flex; align-items: center; gap: 4px; color: #EA580C; font-size: 8px; font-weight: 600; cursor: pointer; }
+        .nav-icon { width: 16px; height: 16px; background: #EA580C; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+        .nav-icon svg { width: 10px; height: 10px; fill: #0A0A0A; }
+
+        .panel-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 999;
+            opacity: 0; visibility: hidden; transition: opacity 0.2s ease;
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .panel-overlay.active { opacity: 1; visibility: visible; }
+
+        .panel-slide {
+            width: 100%; height: auto; max-height: 85vh; background: #0A0A0A;
+            border-top-left-radius: 14px; border-top-right-radius: 14px;
+            transform: translateY(100%); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column; overflow-y: hidden; border: 1px solid #EA580C; border-bottom: none;
+        }
+        .panel-overlay.active .panel-slide { transform: translateY(0); }
+
+        .panel-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(234,88,12,0.1); background: #121212; flex-shrink: 0; }
+        .panel-title { font-size: 12px; font-weight: 600; color: #EA580C; }
+        .close-btn { width: 22px; height: 22px; background: #121212; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #EA580C; }
+        .close-btn svg { width: 10px; height: 10px; fill: #EA580C; }
+
+        .apps-list-container {
+            padding: 8px 12px;
+            overflow-y: auto;
+            flex: 1;
+            max-height: 60vh;
+            scrollbar-width: thin;
+            scrollbar-color: #EA580C #121212;
+        }
+        .apps-list-container::-webkit-scrollbar { width: 3px; }
+        .apps-list-container::-webkit-scrollbar-track { background: #121212; }
+        .apps-list-container::-webkit-scrollbar-thumb { background: #EA580C; border-radius: 2px; }
+
+        .app-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: #121212;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            border-left: 4px solid #EA580C;
+            border: 1px solid rgba(234,88,12,0.06);
+            border-left-width: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .app-item:active { transform: scale(0.98); background: #1a1a1a; }
+
+        .app-icon { width: 34px; height: 34px; border-radius: 5px; flex-shrink: 0; background: #2a1f1a; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .app-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .app-icon svg { width: 20px; height: 20px; fill: #887a6e; }
+
+        .app-info { flex: 1; min-width: 0; }
+        .app-name { font-size: 9px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-pkg { font-size: 6.5px; color: #887a6e; font-family: 'Share Tech Mono', monospace; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .app-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+        .app-action-btn { width: 24px; height: 24px; border-radius: 50%; background: #2a1f1a; border: 1px solid rgba(234,88,12,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .app-action-btn:active { transform: scale(0.9); background: #3a2a1f; }
+        .app-action-btn svg { width: 13px; height: 13px; fill: #EA580C; }
+
+        .empty-state { text-align: center; padding: 30px 0; color: #5a4a3a; font-size: 8px; }
+        .panel-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+        .ftc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 5px; }
+        .ftc-grid .btn-ftc { 
+            background: #121212; 
+            border: 1px solid #2a2a2a; 
+            color: #EA580C; 
+            font-size: 6.5px; 
+            padding: 6px 0; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            text-align: center; 
+            transition: all 0.15s; 
+        }
+        .ftc-grid .btn-ftc.active { 
+            background: #EA580C; 
+            color: #0A0A0A; 
+            border-color: #F97316; 
+            font-weight: 700; 
+        }
+        .ftc-grid .btn-ftc:active { transform: scale(0.95); }
+
+        .dc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 5px; }
+        .dc-grid .btn-dc { 
+            background: #121212; 
+            border: 1px solid #2a2a2a; 
+            color: #EA580C; 
+            font-size: 7px; 
+            padding: 6px 0; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            text-align: center; 
+            transition: all 0.15s; 
+        }
+        .dc-grid .btn-dc.active { 
+            background: #EA580C; 
+            color: #0A0A0A; 
+            border-color: #F97316; 
+            font-weight: 700; 
+        }
+        .dc-grid .btn-dc:active { transform: scale(0.95); }
+
+        .content > .card { margin-bottom: 2px; }
+
+        /* ===== GAME DETAIL PANEL ===== */
+        .game-detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0A0A0A;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+        .game-detail-overlay.open { transform: translateX(0); }
+
+        .game-detail-header {
+            padding: 16px 18px 12px;
+            background: #121212;
+            border-bottom: 1px solid rgba(234,88,12,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .game-detail-back { width: 28px; height: 28px; border-radius: 50%; background: #2a1f1a; border: 1px solid rgba(234,88,12,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; flex-shrink: 0; color: #EA580C; }
+        .game-detail-back:active { transform: scale(0.9); }
+
+        .game-detail-icon { width: 40px; height: 40px; border-radius: 8px; background: #2a1f1a; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        .game-detail-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .game-detail-icon svg { width: 24px; height: 24px; fill: #887a6e; }
+
+        .game-detail-name { flex: 1; min-width: 0; }
+        .game-detail-name h2 { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-detail-name p { font-size: 7px; color: #887a6e; font-family: 'Share Tech Mono', monospace; margin-top: 1px; }
+
+        .game-detail-body { padding: 12px 14px 80px; }
+
+        .game-section-title { font-size: 10px; font-weight: 700; color: #EA580C; margin-bottom: 6px; }
+        .game-section-desc { font-size: 6.5px; color: #887a6e; margin-bottom: 8px; font-weight: 300; }
+
+        .game-card { 
+            background: #121212; 
+            border-left: 4px solid #EA580C; 
+            border-radius: 4px; 
+            padding: 9px 12px; 
+            border: 1px solid rgba(234,88,12,0.06); 
+            border-left-width: 4px; 
+            margin-bottom: 6px;
+            width: 100%;
+        }
+        .game-card-title { font-size: 8px; font-weight: 600; color: #EA580C; margin-bottom: 1px; }
+        .game-card-desc { font-size: 6px; color: #887a6e; font-weight: 300; }
+
+        .game-fps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 4px; }
+        .game-fps-btn { 
+            padding: 5px 0; 
+            border-radius: 3px; 
+            background: #121212; 
+            border: 1px solid #2a2a2a; 
+            color: #887a6e; 
+            font-size: 7px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            text-align: center; 
+            transition: all 0.15s;
+        }
+        .game-fps-btn.active { 
+            background: #EA580C; 
+            color: #0A0A0A; 
+            border-color: #F97316; 
+            font-weight: 700; 
+        }
+        .game-fps-btn:active { transform: scale(0.95); }
+
+        .toast-container { position: fixed; top: 60px; left: 16px; z-index: 99999; display: flex; flex-direction: column; gap: 4px; pointer-events: none; max-width: 260px; }
+        .toast { border-radius: 4px; padding: 8px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); opacity: 0; transform: translateX(-30px); transition: all 0.3s ease; pointer-events: none; border-left: 4px solid #EA580C; background: #121212; }
+        .toast.show { opacity: 1; transform: translateX(0); }
+        .toast.success { border-left-color: #F97316; background: #1a0a0a; }
+        .toast.success .toast-title { color: #F97316; }
+        .toast.success .toast-status { color: #F97316; }
+        .toast.success .toast-status::before { background: #F97316; }
+        .toast.deactivated { border-left-color: #EA580C; background: #1a0a0a; }
+        .toast.deactivated .toast-title { color: #EA580C; }
+        .toast.deactivated .toast-status { color: #EA580C; }
+        .toast.deactivated .toast-status::before { background: #EA580C; }
+        .toast .toast-title { font-size: 8px; font-weight: 700; letter-spacing: 0.5px; }
+        .toast .toast-desc { font-size: 6.5px; color: #aaa; margin-top: 1px; font-weight: 300; }
+        .toast .toast-status { font-size: 6px; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+        .toast .toast-status::before { content: ''; width: 4px; height: 4px; border-radius: 50%; display: inline-block; }
+
+        /* ===== LOADER ===== */
+        .loader-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 9999; 
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 0; visibility: hidden; transition: opacity 0.2s; 
+        }
+        .loader-overlay.show { opacity: 1; visibility: visible; }
+
+        .kzt-loader {
+            width: 70px; height: 70px; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .arc {
+            position: absolute; border-radius: 50%; border-style: solid;
+            border-color: transparent transparent #EA580C transparent;
+            animation-duration: 0.8s; animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            will-change: transform;
+        }
+        .arc-1 { width: 55px; height: 55px; border-width: 2px; animation-name: spin-cw; }
+        .arc-2 { width: 35px; height: 35px; border-width: 2.5px; animation-name: spin-reverse; }
+        .arc-3 { width: 20px; height: 20px; border-width: 2px; animation-name: spin-cw; }
+        .bolt-icon {
+            width: 14px; height: 14px; fill: #EA580C; z-index: 2;
+            animation: pulse-bolt 0.6s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes pulse-bolt { 0% { transform: scale(0.8); } 100% { transform: scale(1.2); } }
+
+        .boost-card-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10001; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
+        .boost-card-overlay.show { opacity: 1; visibility: visible; }
+
+        .boost-card { width: 90%; max-width: 340px; background: #121212; border: 1px solid #EA580C; border-radius: 8px; overflow: hidden; position: relative; max-height: 78vh; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #EA580C, transparent); opacity: 0.5; animation: scan-move 2.8s linear infinite; z-index: 5; pointer-events: none; }
+        @keyframes scan-move { 0% { top: 0; } 100% { top: 100%; } }
+
+        .bc-header { background: #121212; padding: 12px 14px; position: relative; border-bottom: 1px solid #EA580C; text-align: center; }
+        .bc-accent-bar { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 2px; height: 24px; background: #EA580C; border-radius: 1px; }
+        .bc-title { font-size: 12px; color: #EA580C; font-weight: 700; letter-spacing: 1.5px; text-align: center; }
+        .bc-subtitle { font-size: 6px; color: #F97316; letter-spacing: 2px; margin-top: 2px; opacity: 0.8; text-align: center; }
+        .bc-signal { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; gap: 2px; align-items: flex-end; }
+        .bc-sig-bar { width: 2px; border-radius: 1px; transition: height 0.4s ease, background 0.4s ease; }
+        .bc-online { position: absolute; right: 10px; bottom: 4px; font-size: 4.5px; color: rgba(234,88,12,0.25); letter-spacing: 1px; }
+
+        .bc-divider { height: 1px; background: rgba(234,88,12,0.08); margin: 0 12px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .bc-diamond { width: 3px; height: 3px; background: #EA580C; transform: rotate(45deg); opacity: 0.4; position: absolute; }
+
+        .bc-steps { padding: 6px 8px; max-height: 220px; overflow-y: auto; scrollbar-width: none; }
+        .bc-steps::-webkit-scrollbar { display: none; }
+
+        .bc-step { display: grid; grid-template-columns: 18px 22px 1fr 1fr 32px; gap: 3px; padding: 4px 6px; align-items: center; justify-items: center; opacity: 0; transform: translateX(60px); transition: opacity 0.3s ease, transform 0.3s ease; min-height: 22px; border-radius: 3px; }
+        .bc-step.visible { opacity: 1; transform: translateX(0); }
+
+        .bc-cell { height: 16px; border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; padding: 0 3px; font-family: 'Share Tech Mono', monospace; width: 100%; text-align: center; font-size: 5.5px; }
+        .bc-cell.title { justify-content: center; font-weight: 400; font-size: 6px; text-align: center; }
+        .bc-cell.desc { justify-content: center; font-size: 5px; opacity: 0.85; text-align: center; }
+        .bc-cell.badge { font-size: 5px; letter-spacing: 0.3px; font-weight: 600; text-align: center; }
+        .bc-cell.icon { font-size: 6px; }
+        .bc-cell.status { font-size: 6px; font-weight: 700; }
+
+        .bc-step.idle .bc-cell { background: #0A0A0A; color: #5a4a3a; }
+        .bc-step.idle .bc-cell.status::after { content: '○'; font-size: 7px; color: #3a2a1f; }
+        .bc-step.idle .bc-cell.icon::after { content: '▢'; font-size: 6px; color: #2a1f1a; }
+
+        .bc-step.active .bc-cell { background: #121212; color: #fff; }
+        .bc-step.active .bc-cell.status::after { content: '●'; color: #EA580C; font-size: 7px; animation: pulse-dot 0.8s ease infinite alternate; }
+        .bc-step.active .bc-cell.icon::after { content: '▶'; color: #EA580C; font-size: 5px; animation: pulse-dot 0.8s ease infinite alternate; }
+        .bc-step.active .bc-cell.badge { color: #EA580C; }
+        .bc-step.active .bc-cell.title { color: #F97316; }
+        .bc-step.active .bc-cell.desc { color: #ccc; }
+
+        .bc-step.done .bc-cell { background: #0d1a0d; color: #F97316; }
+        .bc-step.done .bc-cell.status::after { content: '✓'; font-size: 7px; font-weight: 700; }
+        .bc-step.done .bc-cell.icon::after { content: '✓'; font-size: 6px; color: #F97316; }
+        .bc-step.done .bc-cell.badge { color: #F97316; }
+        .bc-step.done .bc-cell.title { color: #F97316; }
+        .bc-step.done .bc-cell.desc { color: #F97316; }
+
+        @keyframes pulse-dot { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .bc-footer { padding: 8px 14px; border-top: 1px solid rgba(234,88,12,0.08); display: flex; justify-content: space-between; align-items: center; font-size: 5.5px; color: rgba(255,255,255,0.25); letter-spacing: 0.5px; }
+        .bc-progress { color: #EA580C; font-size: 6.5px; }
+
+        .bc-corner { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #EA580C; opacity: 0.2; }
+        .bc-corner.tl { top: 5px; left: 5px; }
+        .bc-corner.tr { top: 5px; right: 5px; }
+        .bc-corner.bl { bottom: 5px; left: 5px; }
+        .bc-corner.br { bottom: 5px; right: 5px; }
+
+        .bc-corner-line { position: absolute; background: rgba(234,88,12,0.04); }
+        .bc-corner-line.h-t { top: 0.5px; left: 50%; transform: translateX(-50%); width: 30px; height: 1px; }
+        .bc-corner-line.v-tl { top: 5px; left: 5px; width: 6px; height: 1px; }
+        .bc-corner-line.v-tl-v { top: 5px; left: 5px; width: 1px; height: 6px; }
+        .bc-corner-line.v-tr { top: 5px; right: 5px; width: 6px; height: 1px; }
+        .bc-corner-line.v-tr-v { top: 5px; right: 5px; width: 1px; height: 6px; }
+        .bc-corner-line.v-bl { bottom: 5px; left: 5px; width: 6px; height: 1px; }
+        .bc-corner-line.v-bl-v { bottom: 5px; left: 5px; width: 1px; height: 6px; }
+        .bc-corner-line.v-br { bottom: 5px; right: 5px; width: 6px; height: 1px; }
+        .bc-corner-line.v-br-v { bottom: 5px; right: 5px; width: 1px; height: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">A</div>
+        <div class="info">
+            <h2>made by team</h2>
+            <h1>AVX OFFICIAL</h1>
+            <p>AVX Product Top Team Development</p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- KONTEN -->
+    <div class="content" id="mainContent">
+        <!-- FEATURES AKAN DI-RENDER OLEH JAVASCRIPT DARI exec.json -->
+        <div id="featuresContainer">
+            <div class="card" style="text-align:center;padding:20px 0;">
+                <div class="f-title">Loading features...</div>
+                <div class="f-desc">Please wait while we load the configuration</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav-left" onclick="toggleAppsPanel()">
+        <div class="btn-nav">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M4,4h4v4H4V4z M10,4h4v4h-4V4z M16,4h4v4h-4V4z M4,10h4v4H4V10z M10,10h4v4h-4V10z M16,10h4v4h-4V10z M4,16h4v4H4V16z M10,16h4v4h-4V16z M16,16h4v4h-4V16z"/></svg>
+            </div>
+            APPS
+        </div>
+    </div>
+
+    <!-- PANEL APPS -->
+    <div class="panel-overlay" id="appsPanel">
+        <div class="panel-slide">
+            <div class="panel-header">
+                <div class="panel-title">APPS</div>
+                <div class="close-btn" onclick="toggleAppsPanel()">
+                    <svg viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg>
+                </div>
+            </div>
+
+            <div class="panel-content">
+                <div class="apps-list-container" id="appsList">
+                    <div class="empty-state">Loading apps...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GAME DETAIL PANEL ===== -->
+    <div class="game-detail-overlay" id="gameDetailPanel">
+        <div class="game-detail-header">
+            <div class="game-detail-back" onclick="closeGameDetail()">‹</div>
+            <div class="game-detail-icon" id="gameDetailIcon">
+                <svg viewBox="0 0 24 24"><path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8 8,3.59 8,8S16.41,20 12,20z M15,11h-2V9h2v2z M11,11H9V9h2v2z M15,15h-2v-2h2v2z M11,15H9v-2h2v2z"/></svg>
+            </div>
+            <div class="game-detail-name">
+                <h2 id="gameDetailName">Free Fire</h2>
+                <p id="gameDetailPkg">com.dts.freefireth</p>
+            </div>
+        </div>
+        <div class="game-detail-body">
+            <div class="game-section-title">CUSTOM GAME</div>
+            <div class="game-section-desc">Adjust game settings for each game, to improve your gaming experience!</div>
+            <!-- GAME DETAIL FEATURES AKAN DI-RENDER DARI exec.json JUGA -->
+            <div id="gameDetailFeatures"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- LOADER -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="kzt-loader">
+            <div class="arc arc-1"></div>
+            <div class="arc arc-2"></div>
+            <div class="arc arc-3"></div>
+            <svg class="bolt-icon" viewBox="0 0 24 24"><path d="M7,2V13H10V22L17,10H13L17,2H7Z"/></svg>
+        </div>
+    </div>
+
+    <!-- BOOST CARD -->
+    <div class="boost-card-overlay" id="boostCardOverlay">
+        <div class="boost-card">
+            <div class="scan-line"></div>
+            <div class="bc-corner tl"></div><div class="bc-corner tr"></div>
+            <div class="bc-corner bl"></div><div class="bc-corner br"></div>
+            <div class="bc-corner-line h-t"></div>
+            <div class="bc-corner-line v-tl"></div><div class="bc-corner-line v-tl-v"></div>
+            <div class="bc-corner-line v-tr"></div><div class="bc-corner-line v-tr-v"></div>
+            <div class="bc-corner-line v-bl"></div><div class="bc-corner-line v-bl-v"></div>
+            <div class="bc-corner-line v-br"></div><div class="bc-corner-line v-br-v"></div>
+
+            <div class="bc-header">
+                <div class="bc-accent-bar"></div>
+                <div class="bc-title">AVX TOOLS</div>
+                <div class="bc-subtitle">PERFORMANCE BOOSTER</div>
+                <div class="bc-signal" id="signalBars">
+                    <div class="bc-sig-bar" style="height:5px;background:#7C2D12;"></div>
+                    <div class="bc-sig-bar" style="height:10px;background:#7C2D12;"></div>
+                    <div class="bc-sig-bar" style="height:15px;background:#7C2D12;"></div>
+                </div>
+                <div class="bc-online">ONLINE</div>
+            </div>
+
+            <div class="bc-divider"><div class="bc-diamond"></div></div>
+            <div class="bc-steps" id="boostSteps"></div>
+            <div class="bc-footer">
+                <span id="stepCounter">STEP 0/20</span>
+                <span class="bc-progress" id="progressPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ========== EXEC.JSON URL ==========
+    var EXEC_JSON_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/exec.json';
+    var allFeatures = [];
+
+    // ========== TOAST ==========
+    function showToast(title, desc, type) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'toast ' + (type || 'success');
+        var statusText = 'Success';
+        if (type === 'deactivated') statusText = 'Deactivated';
+        else if (type === 'error') statusText = 'Failed';
+        toast.innerHTML = '<div class="toast-title">' + title + '</div><div class="toast-desc">' + desc + '</div><div class="toast-status">' + statusText + '</div>';
+        container.appendChild(toast);
+        requestAnimationFrame(function() { toast.classList.add('show'); });
+        setTimeout(function() {
+            toast.classList.remove('show');
+            setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+        }, 3000);
+    }
+
+    // ========== LOADER ==========
+    var loaderOverlay = document.getElementById('loaderOverlay');
+    var loaderTimeout = null;
+
+    function showLoader() {
+        loaderOverlay.classList.add('show');
+        if (loaderTimeout) clearTimeout(loaderTimeout);
+    }
+
+    function hideLoader() {
+        loaderOverlay.classList.remove('show');
+    }
+
+    // ========== EXECUTE COMMAND ==========
+    function executeCommand(command, label, btnElement) {
+        showLoader();
+        
+        // Active button
+        if (btnElement) {
+            var parent = btnElement.parentElement;
+            if (parent) {
+                var btns = parent.querySelectorAll('.btn, .btn-ftc, .btn-dc, .game-fps-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.remove('active');
+                }
+                btnElement.classList.add('active');
+            }
+        }
+        
+        try {
+            if (typeof Android !== 'undefined') {
+                if (Android.isShizukuReady()) {
+                    var result = Android.executeCommandWithShizuku(command);
+                    if (result && result.length > 0 && result.length < 200) {
+                        showToast(label || 'Command', result.substring(0, 150), 'success');
+                    } else {
+                        showToast(label || 'Command', 'Executed successfully!', 'success');
+                    }
+                } else {
+                    showToast('Error', 'Shizuku not connected!', 'error');
+                }
+            } else {
+                showToast('Error', 'Android interface not available', 'error');
+            }
+        } catch(e) {
+            showToast('Error', 'Failed: ' + e.message, 'error');
+        }
+        
+        if (loaderTimeout) clearTimeout(loaderTimeout);
+        loaderTimeout = setTimeout(function() {
+            hideLoader();
+        }, 800);
+    }
+
+    // ========== RENDER FEATURES ==========
+    function renderFeatures(features, targetId, isGameDetail) {
+        var container = document.getElementById(targetId);
+        if (!container) return;
+        
+        var html = '';
+        var gameDetailFeatures = [];
+        
+        for (var i = 0; i < features.length; i++) {
+            var f = features[i];
+            
+            // Skip jika tidak ada di game detail
+            if (isGameDetail) {
+                var gameOnly = ['Boost Performance', 'Do Not Disturb', 'Network Stabilization', 'Sensitivity Adjusted', 
+                                'FPS 60', 'FPS 90', 'FPS 120', 'Aim Trick', 'ElixirSOC', 'SurfaceFlinger TUNING', 
+                                'Optimize Aiming', 'Prime Sensitivity+', 'Enhanced Aim Assist', 'Enhanced Aim Head', 
+                                'Adjust DragShot Aim', 'Settings Weapon', 'Adjust SmoothAim', 'Adjust ShotAccuracy'];
+                var found = false;
+                for (var g = 0; g < gameOnly.length; g++) {
+                    if (f.name === gameOnly[g]) { found = true; break; }
+                }
+                if (!found) continue;
+            }
+            
+            html += '<div class="card">';
+            html += '<div class="f-title">' + f.name + '</div>';
+            if (f.desc) html += '<div class="f-desc">' + f.desc + '</div>';
+            
+            if (f.type === 'button') {
+                html += '<button class="btn" onclick="executeCommand(\'' + f.cmd.replace(/'/g, "\\'") + '\', \'' + f.name + '\', this)">' + f.name + '</button>';
+            } else if (f.type === 'button_group') {
+                html += '<div class="grid">';
+                for (var j = 0; j < f.options.length; j++) {
+                    var opt = f.options[j];
+                    html += '<button class="btn" onclick="executeCommand(\'' + opt.cmd.replace(/'/g, "\\'") + '\', \'' + opt.label + '\', this)">' + opt.label + '</button>';
+                }
+                html += '</div>';
+            } else if (f.type === 'switch') {
+                html += '<div class="toggle-row">';
+                html += '<span style="font-size:6.5px;color:#887a6e;">ON / OFF</span>';
+                html += '<label class="clean-switch">';
+                html += '<input type="checkbox" onchange="if(this.checked){ executeCommand(\'' + f.cmd_on.replace(/'/g, "\\'") + '\', \'' + f.name + ' ON\'); }else{ executeCommand(\'' + f.cmd_off.replace(/'/g, "\\'") + '\', \'' + f.name + ' OFF\'); }">';
+                html += '<span class="clean-sl"></span>';
+                html += '</label>';
+                html += '</div>';
+            } else if (f.type === 'seekbar') {
+                html += '<div class="slider-vertical-wrap">';
+                html += '<input type="range" min="' + f.min + '" max="' + f.max + '" value="' + f.default + '" ';
+                html += 'oninput="this.parentElement.querySelector(\'.val\').innerText=parseFloat(this.value).toFixed(1); ';
+                html += 'executeCommand(\'' + f.cmd.replace(/'/g, "\\'").replace('{value}', '\'+this.value+\'') + '\', \'' + f.name + '\')">';
+                html += '<span class="val">' + f.default + '.0</span>';
+                html += '</div>';
+            }
+            
+            html += '</div>';
+        }
+        
+        container.innerHTML = html;
+    }
+
+    // ========== LOAD EXEC.JSON ==========
+    function loadExecJson() {
+        var container = document.getElementById('featuresContainer');
+        container.innerHTML = '<div class="card" style="text-align:center;padding:20px 0;"><div class="f-title">Loading features...</div><div class="f-desc">Please wait...</div></div>';
+        
+        fetch(EXEC_JSON_URL)
+            .then(function(response) {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(function(data) {
+                allFeatures = data.features || [];
+                // Render main features
+                renderFeatures(allFeatures, 'featuresContainer', false);
+                // Render game detail features
+                renderFeatures(allFeatures, 'gameDetailFeatures', true);
+            })
+            .catch(function(e) {
+                container.innerHTML = '<div class="card" style="text-align:center;padding:20px 0;border-left-color:#FF4444;"><div class="f-title" style="color:#FF4444;">Error loading features</div><div class="f-desc">' + e.message + '</div></div>';
+                showToast('Error', 'Failed to load exec.json: ' + e.message, 'error');
+            });
+    }
+
+    // ========== GAME DETECTION ==========
+    function isGameApp(name, pkg) {
+        var gameKeywords = ['free fire', 'ff', 'pubg', 'mobile legends', 'mlbb', 'genshin', 'call of duty', 'cod', 'arena of valor', 'aov', 'clash of clans', 'coc', 'clash royale', 'cr', 'brawl stars', 'bs', 'wild rift', 'wr', 'league of legends', 'lol', 'battle', 'shooter', 'war', 'warzone', 'fortnite', 'among us', 'minecraft', 'roblox', 'grand chase', 'ragnarok', 'black desert', 'brawl', 'asphalt', 'racing', 'fifa', 'pes', 'e football', 'pro evolution'];
+        var gamePackages = ['com.dts.freefireth', 'com.dts.freefiremax', 'com.pubg.imobile', 'com.tencent.ig', 'com.mobile.legends', 'com.mlbb', 'com.tencent.tmgp.sgame', 'com.supercell.clashofclans', 'com.supercell.clashroyale', 'com.supercell.brawlstars', 'com.supercell.boombeach', 'com.activision.callofduty.shooter', 'com.mihoyo.genshinimpact', 'com.ea.games.fifa', 'com.konami.pes', 'com.roblox.client', 'com.mojang.minecraftpe', 'com.innersloth.spacemafia', 'com.epicgames.fortnite', 'com.gameloft.asphalt9', 'com.gameloft.asphalt8'];
+        var lowerName = name.toLowerCase();
+        var lowerPkg = pkg.toLowerCase();
+        for (var i = 0; i < gameKeywords.length; i++) {
+            if (lowerName.indexOf(gameKeywords[i]) !== -1) return true;
+        }
+        for (var j = 0; j < gamePackages.length; j++) {
+            if (lowerPkg.indexOf(gamePackages[j]) !== -1 || lowerPkg === gamePackages[j]) return true;
+        }
+        return false;
+    }
+
+    // ========== APPS PANEL ==========
+    var allApps = [];
+
+    function toggleAppsPanel() {
+        var panel = document.getElementById('appsPanel');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+            loadApps();
+        }
+        if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    function loadApps() {
+        var container = document.getElementById('appsList');
+        container.innerHTML = '<div class="empty-state">Loading apps...</div>';
+        try {
+            if (typeof Android !== 'undefined' && Android.getApps) {
+                var appsJson = Android.getApps();
+                var apps = JSON.parse(appsJson);
+                allApps = apps;
+                renderApps();
+            } else {
+                loadMockApps();
+            }
+        } catch (e) {
+            console.error('Error loading apps:', e);
+            loadMockApps();
+        }
+    }
+
+    function loadMockApps() {
+        allApps = [
+            { name: 'Free Fire MAX', packageName: 'com.dts.freefiremax', icon: '' },
+            { name: 'Mobile Legends', packageName: 'com.mobile.legends', icon: '' },
+            { name: 'PUBG Mobile', packageName: 'com.pubg.imobile', icon: '' },
+            { name: 'WhatsApp', packageName: 'com.whatsapp', icon: '' },
+            { name: 'Instagram', packageName: 'com.instagram.android', icon: '' },
+            { name: 'YouTube', packageName: 'com.google.android.youtube', icon: '' },
+            { name: 'Chrome', packageName: 'com.android.chrome', icon: '' },
+            { name: 'Genshin Impact', packageName: 'com.mihoyo.genshinimpact', icon: '' },
+            { name: 'Call of Duty Mobile', packageName: 'com.activision.callofduty.shooter', icon: '' },
+            { name: 'TikTok', packageName: 'com.zhiliaoapp.musically', icon: '' }
+        ];
+        renderApps();
+    }
+
+    function renderApps() {
+        var container = document.getElementById('appsList');
+        if (!allApps || allApps.length === 0) {
+            container.innerHTML = '<div class="empty-state">No apps found</div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < allApps.length; i++) {
+            var app = allApps[i];
+            var iconHtml = '';
+            if (app.icon && app.icon.length > 0) {
+                iconHtml = '<img src="data:image/png;base64,' + app.icon + '" alt="' + app.name + '">';
+            } else {
+                iconHtml = '<svg viewBox="0 0 24 24"><path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8 8,3.59 8,8S16.41,20 12,20z M15,11h-2V9h2v2z M11,11H9V9h2v2z M15,15h-2v-2h2v2z M11,15H9v-2h2v2z"/></svg>';
+            }
+            var isGame = isGameApp(app.name, app.packageName);
+            var nameClean = app.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            var pkgClean = app.packageName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            var iconClean = iconHtml.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            html += '<div class="app-item" data-name="' + nameClean + '" data-pkg="' + pkgClean + '" data-icon="' + iconClean + '" data-isgame="' + isGame + '" onclick="openGameDetailFromData(this)">';
+            html += '    <div class="app-icon">' + iconHtml + '</div>';
+            html += '    <div class="app-info">';
+            html += '        <div class="app-name">' + app.name + '</div>';
+            html += '        <div class="app-pkg">' + app.packageName + '</div>';
+            html += '    </div>';
+            html += '    <div class="app-actions">';
+            html += '        <div class="app-action-btn" onclick="event.stopPropagation(); openGameDetailFromData(this.parentElement.parentElement)">';
+            html += '            <svg viewBox="0 0 24 24"><path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/></svg>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</div>';
+        }
+        container.innerHTML = html;
+    }
+
+    function openGameDetailFromData(el) {
+        var name = el.getAttribute('data-name') || '';
+        var pkg = el.getAttribute('data-pkg') || '';
+        var icon = el.getAttribute('data-icon') || '';
+        var isGame = el.getAttribute('data-isgame') === 'true';
+        openGameDetail(name, pkg, icon, isGame);
+    }
+
+    function androidReady() {
+        console.log('Android ready, loading apps...');
+        loadApps();
+        loadExecJson();
+    }
+
+    var currentGame = null;
+
+    function openGameDetail(name, pkg, iconHtml, isGame) {
+        if (!isGame) {
+            showToast('Khusus Game Free Fire', 'Fitur ini hanya untuk game Free Fire', 'deactivated');
+            return;
+        }
+        if (pkg !== 'com.dts.freefireth' && pkg !== 'com.dts.freefiremax') {
+            showToast('Khusus Game Free Fire', 'Fitur ini hanya untuk game Free Fire', 'deactivated');
+            return;
+        }
+        document.getElementById('gameDetailName').textContent = name;
+        document.getElementById('gameDetailPkg').textContent = pkg;
+        document.getElementById('gameDetailIcon').innerHTML = iconHtml || '<svg viewBox="0 0 24 24"><path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8 8,3.59 8,8S16.41,20 12,20z M15,11h-2V9h2v2z M11,11H9V9h2v2z M15,15h-2v-2h2v2z M11,15H9v-2h2v2z"/></svg>';
+        currentGame = { name: name, pkg: pkg };
+        document.getElementById('gameDetailPanel').classList.add('open');
+        closeAppsPanel();
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    function closeGameDetail() {
+        document.getElementById('gameDetailPanel').classList.remove('open');
+        if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    function closeAppsPanel() {
+        document.getElementById('appsPanel').classList.remove('active');
+    }
+
+    // ========== BOOST CARD ==========
+    var boostCardOverlay = document.getElementById('boostCardOverlay');
+    var boostStepsContainer = document.getElementById('boostSteps');
+    var stepCounterEl = document.getElementById('stepCounter');
+    var progressPercentEl = document.getElementById('progressPercent');
+    var signalBars = document.getElementById('signalBars');
+
+    var STEP_TITLES = [
+        "Initialize System", "Scan Memory", "Optimize RAM", "Boost CPU",
+        "Accelerate GPU", "Clear Cache", "Protect Process", "Stabilize Network",
+        "Calibrate Performance", "Optimize Battery", "Tune Graphics", "Clear Background",
+        "Boost Signal", "Optimize Storage", "Scan Threats", "Refresh DNS",
+        "Boost Render", "Stabilize FPS", "Sync Components", "Completed"
+    ];
+
+    var STEP_DESCS = [
+        "Loading modules", "Detecting memory usage",
+        "Freeing idle RAM", "Setting CPU priority",
+        "Enabling turbo mode", "Removing temp files",
+        "Securing critical processes", "Optimizing connection",
+        "Tuning system parameters", "Reducing power consumption",
+        "Setting render quality", "Closing background processes",
+        "Strengthening data connection", "Optimizing storage",
+        "Scanning system threats", "Updating DNS cache",
+        "Enhancing frame render", "Stabilizing frame rate",
+        "Syncing components", "All systems optimal"
+    ];
+
+    function startBoostCardSequence() {
+        if (!boostStepsContainer) return;
+        boostStepsContainer.innerHTML = '';
+        var currentStep = 0;
+        boostCardOverlay.classList.add('show');
+        startSignalAnimation();
+        for (var i = 0; i < STEP_TITLES.length; i++) {
+            var stepEl = document.createElement('div');
+            stepEl.className = 'bc-step idle';
+            stepEl.id = 'step-' + i;
+            stepEl.innerHTML = '<div class="bc-cell icon"></div><div class="bc-cell status"></div><div class="bc-cell title">' + STEP_TITLES[i] + '</div><div class="bc-cell desc">' + STEP_DESCS[i] + '</div><div class="bc-cell badge">IDLE</div>';
+            boostStepsContainer.appendChild(stepEl);
+        }
+        function processNextStep() {
+            if (currentStep >= STEP_TITLES.length) {
+                setTimeout(function() {
+                    boostCardOverlay.classList.remove('show');
+                }, 1200);
+                return;
+            }
+            if (currentStep > 0) {
+                var prev = document.getElementById('step-' + (currentStep - 1));
+                if (prev) {
+                    prev.classList.remove('active');
+                    prev.classList.add('done');
+                    var badge = prev.querySelector('.badge');
+                    if (badge) badge.textContent = 'DONE';
+                }
+            }
+            var curr = document.getElementById('step-' + currentStep);
+            if (curr) {
+                curr.classList.remove('idle');
+                curr.classList.add('active', 'visible');
+                var badge = curr.querySelector('.badge');
+                if (badge) badge.textContent = 'RUN';
+            }
+            stepCounterEl.textContent = 'STEP ' + (currentStep + 1) + '/' + STEP_TITLES.length;
+            progressPercentEl.textContent = Math.round(((currentStep + 1) / STEP_TITLES.length) * 100) + '%';
+            currentStep++;
+            setTimeout(processNextStep, currentStep === STEP_TITLES.length ? 1000 : 500);
+        }
+        setTimeout(processNextStep, 300);
+    }
+
+    var signalInterval = null;
+
+    function startSignalAnimation() {
+        if (!signalBars) return;
+        var bars = signalBars.querySelectorAll('.bc-sig-bar');
+        var phase = 0;
+        var phases = [[0.3,0.15,0.05], [1,0.5,0.2], [1,1,0.6], [1,1,1]];
+        if (signalInterval) clearInterval(signalInterval);
+        signalInterval = setInterval(function() {
+            var p = phases[phase % 4];
+            bars.forEach(function(bar, i) {
+                var heights = [5, 10, 15];
+                bar.style.height = (heights[i] * p[i]) + 'px';
+                bar.style.background = p[i] > 0.5 ? '#EA580C' : '#7C2D12';
+            });
+            phase++;
+        }, 600);
+    }
+
+    // ========== INIT ==========
+    if (typeof Android !== 'undefined') {
+        setTimeout(androidReady, 500);
+    } else {
+        // Fallback for testing tanpa Android
+        loadExecJson();
+        loadMockApps();
+    }
+</script>
+
+</body>
+</html>
